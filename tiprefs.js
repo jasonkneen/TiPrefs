@@ -102,7 +102,7 @@ exports.addTextInput = function(opts) {
 		var editWin = Ti.UI.createWindow({
 			title : 'edit',
 			Hidden : false,
-			backgroundColor:'#fff'
+			backgroundColor : '#fff'
 		});
 
 		var table = Ti.UI.createTableView({
@@ -155,6 +155,14 @@ exports.addTextInput = function(opts) {
 			Ti.App.Properties.setString(name + "_" + (opts.id || opts.caption), text.value);
 			nav.close(editWin);
 		});
+
+		if (Titanium.Platform.osname == 'android') {
+			editWin.addEventListener('android:back', function(e) {
+				value.text = text.value;
+				Ti.App.Properties.setString(name + "_" + (opts.id || opts.caption), text.value);
+				editWin.close();
+			});
+		}
 
 		if (nav) {
 			nav.open(editWin);
