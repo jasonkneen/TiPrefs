@@ -63,6 +63,13 @@ function createLabel(caption) {
 	return label;
 }
 
+exports.getBool = function(name, property) {
+	Ti.App.Properties.getBool(name + "_" + property);
+}
+
+exports.getString = function(name, property) {
+	Ti.App.Properties.getString(name + "_" + property);
+}
 // initialise a new settings panel
 exports.init = function(title) {
 	rows = [];
@@ -94,7 +101,8 @@ exports.addTextInput = function(opts) {
 
 		var editWin = Ti.UI.createWindow({
 			title : 'edit',
-			Hidden : false
+			Hidden : false,
+			backgroundColor:'#fff'
 		});
 
 		var table = Ti.UI.createTableView({
@@ -129,8 +137,10 @@ exports.addTextInput = function(opts) {
 
 		table.setData(rows);
 
-		editWin.setLeftNavButton(cancel);
-		editWin.setRightNavButton(save);
+		if (Titanium.Platform.osname != 'android') {
+			editWin.setLeftNavButton(cancel);
+			editWin.setRightNavButton(save);
+		}
 
 		editWin.add(table);
 
@@ -146,7 +156,13 @@ exports.addTextInput = function(opts) {
 			nav.close(editWin);
 		});
 
-		nav.open(editWin);
+		if (nav) {
+			nav.open(editWin);
+		} else {
+			editWin.open({
+				modal : true
+			});
+		}
 	});
 }
 exports.addChoice = function(opts) {
@@ -176,7 +192,8 @@ exports.addChoice = function(opts) {
 
 		var editWin = Ti.UI.createWindow({
 			title : 'select',
-			Hidden : false
+			Hidden : false,
+			backgroundColor : '#fff'
 		});
 
 		var table = Ti.UI.createTableView({
@@ -201,7 +218,7 @@ exports.addChoice = function(opts) {
 
 			row.value = opts.choices[i].value;
 
-			row.hasCheck = Ti.App.Properties.getBool(name + "_" + (opts.id || opts.caption) + "_" + row.value)
+			row.hasCheck = Ti.App.Properties.getBool(name + "_" + (opts.id || opts.caption) + "_" + row.value) || false
 
 			row.add(text);
 
@@ -213,6 +230,11 @@ exports.addChoice = function(opts) {
 
 		table.addEventListener('click', function(e) {
 			e.row.hasCheck = !e.row.hasCheck;
+
+			if (Titanium.Platform.osname == 'android') {
+				Ti.App.Properties.setBool(name + "_" + (opts.id || opts.caption) + "_" + e.row.value, e.row.hasCheck)
+			}
+
 		});
 
 		var cancel = Ti.UI.createButton({
@@ -227,8 +249,11 @@ exports.addChoice = function(opts) {
 			height : 30
 		});
 
-		editWin.setLeftNavButton(cancel);
-		editWin.setRightNavButton(save);
+		if (Titanium.Platform.osname != 'android') {
+			editWin.setLeftNavButton(cancel);
+			editWin.setRightNavButton(save);
+		}
+
 		editWin.add(table);
 
 		cancel.addEventListener('click', function() {
@@ -237,13 +262,23 @@ exports.addChoice = function(opts) {
 		});
 
 		save.addEventListener('click', function() {
-			for ( i = 0; i < table.data[0].rows.length; i++) {
-				Ti.App.Properties.setBool(name + "_" + (opts.id || opts.caption) + "_" + table.data[0].rows[i].value, table.data[0].rows[i].hasCheck)
+
+			if (Titanium.Platform.osname != 'android') {
+				for ( i = 0; i < table.data[0].rows.length; i++) {
+					Ti.App.Properties.setBool(name + "_" + (opts.id || opts.caption) + "_" + table.data[0].rows[i].value, table.data[0].rows[i].hasCheck)
+				}
 			}
 			nav.close(editWin);
 		});
 
-		nav.open(editWin);
+		if (nav) {
+			nav.open(editWin);
+		} else {
+			editWin.open({
+				modal : true
+			});
+		}
+
 	});
 }
 // add a switch row
@@ -296,20 +331,28 @@ exports.open = function(tabGroup) {
 	// if we have a tabGroup specified
 	if (!tabGroup) {
 
-		// we need a nav
-		nav = Ti.UI.iPhone.createNavigationGroup({
-			window : prefsWin
-		});
+		if (Titanium.Platform.osname == 'android') {
+			prefsWin.backgroundColor = '#FFF';
+			prefsWin.open({
+				modal : true
+			});
 
-		// create a host window
-		var rootWin = Ti.UI.createWindow();
+		} else {
 
-		// add the navbar
-		rootWin.add(nav);
+			// we need a nav
+			nav = Ti.UI.iPhone.createNavigationGroup({
+				window : prefsWin
+			});
 
-		// open it
-		rootWin.open();
+			// create a host window
+			var rootWin = Ti.UI.createWindow();
 
+			// add the navbar
+			rootWin.add(nav);
+
+			// open it
+			rootWin.open();
+		}
 	} else {
 
 		nav = tabGroup.activeTab;
