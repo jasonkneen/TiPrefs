@@ -3,6 +3,8 @@ TiPrefs
 
 A module to help build preferences/settings pages quickly allowing you to add Switches, TextInputs etc.
 
+![TiPrefs](https://raw.github.com/jasonkneen/images/master/TiPrefs/TiPrefs.png)
+
 Currently supported : textinput, switch/bool, choice list - tested on iOS only.
 
 Example:-
