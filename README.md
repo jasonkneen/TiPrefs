@@ -54,6 +54,33 @@ Render it (and it'll create a navigation group container)
 or specify a tabGroup and it'll use that
 	
 	prefs.open(tabGroup);
+	
+You can also add sections
+
+	prefs.init("Settings");
+
+    	prefs.addSection({
+        	title: "Section"
+    	});
+
+	prefs.addSwitch({
+        	id: "SAVE_ON_QUIT",
+        	caption: "Alarm"
+    	});
+
+	prefs.addSection({
+	        title: "T10 Accounts"
+	});
+
+	prefs.addTextInput({
+	        id: "USERNAME",
+	        caption: "username",
+	        value: "Anonymous"
+	});
+	
+	prefs.closeSection();
+	
+	prefs.open();
 
 You can retrieve values using the standard Ti properties based on the format
 
