@@ -53,10 +53,8 @@ function addRow(controls) {
 		// add the row to the section
 		section.add(row);
 		// return the section object
-		return section;
+		return row;
 	}
-
-
 }
 
 // creates a default label for a row
@@ -113,7 +111,7 @@ exports.addTextInput = function (opts) {
 		var rows = [];
 
 		var editWin = Ti.UI.createWindow({
-			title: 'edit',
+			title: 'Edit',
 			Hidden: false,
 			backgroundColor: '#fff'
 		});
@@ -315,11 +313,11 @@ exports.addSwitch = function (opts) {
 	});
 
 	var toggle = Ti.UI.createSwitch({
-		value: Ti.App.Properties.getBool(name + "_" + opts.caption, false)
+		value: Ti.App.Properties.getBool(name + "_" + opts.id, false)
 	});
 
 	toggle.addEventListener("change", function (e) {
-		Ti.App.Properties.setBool(name + "_" + (opts.id || opts.caption), e.value);
+		Ti.App.Properties.setBool(name + "_" + opts.id, e.value);
 
 		if (opts.onChange) {
 			opts.onChange(toggle.value);
@@ -338,7 +336,7 @@ exports.addSection = function (opts) {
 	if (section !== null) {
 		sections.push(section);
 	}
-	var title = (opts !== undefined && opts.title !== undefined)?opts.title:"Section " + (sections.length + 1);
+	var title = (opts !== undefined && opts.title !== undefined) ? opts.title : "Section " + (sections.length + 1);
 	section = Ti.UI.createTableViewSection({
 		headerTitle: title
 	});
@@ -346,7 +344,7 @@ exports.addSection = function (opts) {
 	return section;
 }
 
-exports.closeSection = function(){
+exports.closeSection = function () {
 	sections.push(section);
 }
 // open the prefs window
@@ -364,11 +362,7 @@ exports.open = function (tabGroup) {
 
 	// push the rows
 	// table.data = rows;
-	
-
-	
 	table.data = sections;
-
 	// add it to the specified window
 	prefsWin.add(table);
 
@@ -391,10 +385,6 @@ exports.open = function (tabGroup) {
 			// create a host window
 			var rootWin = Ti.UI.createWindow();
 
-			// add the navbar
-			rootWin.add(nav);
-
-
 			// add close button to navbar 
 			var closeButton = Ti.UI.createButton({
 				title: 'Close',
@@ -411,6 +401,10 @@ exports.open = function (tabGroup) {
 				rootWin = null;
 				prefsWin = null;
 			});
+
+			// add the navbar
+			rootWin.add(nav);
+
 			// open it
 			rootWin.open();
 		}
