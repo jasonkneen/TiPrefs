@@ -125,9 +125,13 @@ exports.addTextInput = function (opts) {
 		});
 
 		var text = Ti.UI.createTextField({
+			top: 0,
+			height: 50,
 			left: 10,
 			right: 10,
-			value: value.text
+			value: value.text,
+			autocorrect: false,
+			autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE
 		});
 
 		var cancel = Ti.UI.createButton({
@@ -167,7 +171,7 @@ exports.addTextInput = function (opts) {
 			nav.close(editWin);
 		});
 
-		if (Titanium.Platform.osname == 'android') {
+		if (Titanium.Platform.osname === 'android') {
 			editWin.addEventListener('android:back', function (e) {
 				value.text = text.value;
 				Ti.App.Properties.setString(name + "_" + (opts.id || opts.caption), text.value);
@@ -251,7 +255,7 @@ exports.addChoice = function (opts) {
 		table.addEventListener('click', function (e) {
 			e.row.hasCheck = !e.row.hasCheck;
 
-			if (Titanium.Platform.osname == 'android') {
+			if (Titanium.Platform.osname === 'android') {
 				Ti.App.Properties.setBool(name + "_" + (opts.id || opts.caption) + "_" + e.row.value, e.row.hasCheck)
 			}
 
@@ -369,7 +373,7 @@ exports.open = function (tabGroup) {
 	// if we have a tabGroup specified
 	if (!tabGroup) {
 
-		if (Titanium.Platform.osname == 'android') {
+		if (Titanium.Platform.osname === 'android') {
 			prefsWin.backgroundColor = '#FFF';
 			prefsWin.open({
 				modal: true
